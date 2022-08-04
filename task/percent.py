@@ -59,6 +59,56 @@ def get_perc_task_type_b(difficult: str = None) -> tuple:
     )
 
 
+def get_perc_task_type_c(difficult: str = None) -> tuple:
+    """
+    Найти сколько одно число составляет процентов от другого числа.
+    :param difficult: уровень сложности.
+    :return: dict вопрос, кортеж с ответами, уровень сложности задачи.
+    """
+    template = get_random_template('C')
+
+    # вычисления
+    num_1 = random.randrange(150, 1000, 10)
+    perc = random.randrange(10, 90, 10)/100
+    num_2 = math.ceil(num_1*perc)
+
+    # рендер вопроса и вычисление ответа
+    question = template['question'].format(num_1=num_2, num_2=num_1).capitalize()
+    result = mat.get_percent(num=num_2, denominator=num_1)
+
+    return dict(
+        question=question, answers=get_wrong_answers(result), difficult=difficult
+    )
+
+
+def get_perc_task_type_d(difficult: str = None) -> dict:
+    """
+    Зная 2 числа найти разницу между ними в процентах.
+    :param difficult: уровень сложности вопрос.
+    :return: dict вопрос, кортеж с ответами, уровень сложности задачи.
+    """
+    template, staff = get_random_template('D', product=True)
+
+    # вычисления
+    result = random.randrange(10, 90, 10)
+
+    if template['meta'] == "price up":
+        cost_old = random.randrange(150, 500, 10)
+        perc = (result/100)+1
+        cost_new = math.ceil(cost_old*perc)
+    elif template['meta'] == "price down":
+        cost_old = random.randrange(150, 1000, 10)
+        perc = result/100
+        cost_new = math.ceil(cost_old-(cost_old*perc))
+
+    # рендер вопроса
+    question = template['question'].format(
+        name=staff, cost_old=cost_old, cost_new=cost_new).capitalize()
+
+    return dict(
+        question=question, answers=get_wrong_answers(result), difficult=difficult
+    )
+
 
 def get_wrong_answers(answer: int = None) -> tuple:
     """
