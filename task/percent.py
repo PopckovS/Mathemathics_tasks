@@ -116,12 +116,16 @@ def get_wrong_answers(answer: int = None) -> tuple:
     :param answer: int правильный ответ
     :return: tuple правильный и список со всеми ответами
     """
+    # диапозон генерации ответа
     rang_v = math.ceil(answer/2)
     all_answers = [answer]
-    for _ in range(3):
-        all_answers.append(
-            random.randint(answer-rang_v, answer+rang_v)
-        )
+
+    # генерируем 3 уникальных неправильных ответа
+    while len(all_answers) < 4:
+        res = random.randint(answer - rang_v, answer + rang_v)
+        if res == answer or res in all_answers:
+            continue
+        all_answers.append(res)
 
     return answer, all_answers
 
