@@ -1,11 +1,19 @@
 import math
 import random
 
-from mat import mat
+from utils import util
 from .templates import TEMPLATES
 
 """
-Генератор задач на проценты.
+The generator of tasks for percentages.
+
+Percentage tasks are divided into categories:
+A - Find percentages of the number.
+B - Find a number by knowing the value of some percentage of it.
+C - Find how much a number is a percentage of another number.
+D - Find the difference in % between 2 numbers.
+
+Генерация математических задачек на проценты.
 
 Задачи на проценты разделены по категориям:
 A - Найти процента от числа.
@@ -17,79 +25,87 @@ D - Найти разницу в % между 2 числами.
 
 def get_perc_task_type_a(difficult: str = None) -> tuple:
     """
-    Найти процент от числа.
-    :param difficult: уровень сложности.
-    :return: вопрос, кортеж с ответами, уровень сложности задачи.
+    Find the percentage of the number.
+    :param difficult: str - the difficulty level of the question.
+    :return: dict - a question, a tuple with answers, the difficulty level of the task.
     """
-    template = get_random_template('A')
+    template = get_random_percent_template('A')
 
-    # вычисления
+    # calculations
     num = random.randrange(150, 1000, 10)
     perc = random.randrange(10, 90, 10)
 
-    # рендер вопроса
+    # question rendering
     question = template['question'].format(perc=perc, num=num).capitalize()
-    result = mat.get_percent_of_num(perc, num)
+    result = util.get_percent_of_num(perc, num)
 
     return dict(
-        question=question, answers=get_wrong_answers(result), difficult=difficult
+        answer=result,
+        question=question,
+        difficult=difficult,
+        answers=util.get_wrong_answers(result)
     )
 
 
 def get_perc_task_type_b(difficult: str = None) -> tuple:
     """
-    Генерирует задачу на проценты.
-    Найти число некое число, зная значение некоторого его процента.
-    :param difficult: уровень сложности.
-    :return: вопрос, кортеж с ответами, уровень сложности задачи.
+    Find a number a certain number, knowing the value of a certain percentage of it.
+    :param difficult: str - the difficulty level of the question.
+    :return: dict - a question, a tuple with answers, the difficulty level of the task.
     """
-    template = get_random_template('B')
+    template = get_random_percent_template('B')
 
-    # вычисления
+    # calculations
     full_num = random.randrange(150, 1000, 10)
     perc = random.randrange(10, 90, 10)
     num = math.ceil(full_num*perc/100)
 
-    # рендер вопроса
+    # question rendering
     question = template['question'].format(perc=perc, num=num).capitalize()
-    result = mat.get_number_of_percent(perc, num)
+    result = util.get_number_of_percent(perc, num)
 
     return dict(
-        question=question, answers=get_wrong_answers(result), difficult=difficult
+        answer=result,
+        question=question,
+        difficult=difficult,
+        answers=util.get_wrong_answers(result)
     )
 
 
 def get_perc_task_type_c(difficult: str = None) -> tuple:
     """
-    Найти сколько одно число составляет процентов от другого числа.
-    :param difficult: уровень сложности.
-    :return: dict вопрос, кортеж с ответами, уровень сложности задачи.
+    Find how much one number is a percentage of another number.
+    :param difficult: str - the difficulty level of the question.
+    :return: dict - a question, a tuple with answers, the difficulty level of the task.
     """
-    template = get_random_template('C')
+    template = get_random_percent_template('C')
 
-    # вычисления
+    # calculations
     num_1 = random.randrange(150, 1000, 10)
     perc = random.randrange(10, 90, 10)/100
     num_2 = math.ceil(num_1*perc)
 
-    # рендер вопроса и вычисление ответа
+    # question rendering
     question = template['question'].format(num_1=num_2, num_2=num_1).capitalize()
-    result = mat.get_percent(num=num_2, denominator=num_1)
+    result = util.get_percent(num=num_2, denominator=num_1)
 
     return dict(
-        question=question, answers=get_wrong_answers(result), difficult=difficult
+        answer=result,
+        question=question,
+        difficult=difficult,
+        answers=util.get_wrong_answers(result)
     )
 
 
 def get_perc_task_type_d(difficult: str = None) -> dict:
     """
-    Зная 2 числа найти разницу между ними в процентах.
-    :param difficult: уровень сложности вопрос.
-    :return: dict вопрос, кортеж с ответами, уровень сложности задачи.
+    Knowing 2 numbers, find the difference between them as a percentage.
+    :param difficult: str - the difficulty level of the question.
+    :return: dict - a question, a tuple with answers, the difficulty level of the task.
     """
-    template, staff = get_random_template('D', product=True)
+    template, staff = get_random_percent_template('D', product=True)
 
-    # вычисления
+    # calculations
     result = random.randrange(10, 90, 10)
 
     if template['meta'] == "price up":
@@ -101,43 +117,31 @@ def get_perc_task_type_d(difficult: str = None) -> dict:
         perc = result/100
         cost_new = math.ceil(cost_old-(cost_old*perc))
 
-    # рендер вопроса
+    # question rendering
     question = template['question'].format(
         name=staff, cost_old=cost_old, cost_new=cost_new).capitalize()
 
     return dict(
-        question=question, answers=get_wrong_answers(result), difficult=difficult
+        answer=result,
+        question=question,
+        difficult=difficult,
+        answers=util.get_wrong_answers(result)
     )
 
 
-def get_wrong_answers(answer: int = None) -> tuple:
+def get_random_percent_template(task_type=None, product=False):
     """
-    Генерирует неправильные ответы в диапозоне +/- 50% от правильного ответа.
-    :param answer: int правильный ответ
-    :return: tuple правильный и список со всеми ответами
+    Gets a random question template, or a question and a product
+    :param task_type: str - get a specific type of task.
+    :param product: str - get random product or not.
+    :return: dict; [dict, str] task and product.
     """
-    # диапозон генерации ответа
-    rang_v = math.ceil(answer/2)
-    all_answers = [answer]
-
-    # генерируем 3 уникальных неправильных ответа
-    while len(all_answers) < 4:
-        res = random.randint(answer - rang_v, answer + rang_v)
-        if res == answer or res in all_answers:
-            continue
-        all_answers.append(res)
-
-    return answer, all_answers
-
-
-def get_random_template(task_type=None, product=False):
-    """Получает рандомный шаблон вопроса, или вопроса и товара"""
     templ = random.choice(TEMPLATES['PERCENT']['PERCENT_TASKS'][task_type])
 
+    # get product
     if product:
         staff = random.choice(TEMPLATES['PERCENT']['PERCENT_PRODUCT'])
         return templ, staff
-
     return templ
 
 
