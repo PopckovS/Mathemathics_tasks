@@ -1,27 +1,84 @@
 import random
+from utils import util
 
 """
-Задачи на математические операции.
+Tasks for mathematical operations.
 """
 
-# возможные операции
-operator = ["+", "-", "*", ":"]
+# all possible operations
+OPERATORS = ["+", "-", "*", ":"]
 
 
 def get_expressions():
-    operations = get_random_operations()
+    """
+    Generate an expression
+    :return:
+    """
+    operations = get_random_operations(min_op=3, max_op=4, use_one=(':',), not_use=('*',))
+    expressions = str()
+    division = []
+    num_list = []
+
+    for iter in range(len(operations)):
+        current = operations[iter]
+        num = random.randint(1, 10)
+
+        if current == '+' or current == '-':
+            num_list.append(num)
+        elif current == ':':
+            num_list += [*operation_division()]
+            division += [*operation_division()]  #  FIXME
+        elif current == '*':
+            num_list.append(num)
+
+        if len(operations) == iter+1:
+            if ':' in operations:
+                continue
+            random.randint(1, 10)
+
+    #  TODO высчитать результат
+
+    return dict(
+        expressions=expressions,
+        operations=operations,
+        division=division,
+        num_list=num_list,
+        # all_answers=util.get_wrong_answers(answer)
+    )
 
 
-def get_random_operations():
-    """Возвращает рандомное количество рандомных арифметических операций"""
-    count = random.randint(1, 4)
+def operation_division():
+    """Generation of the division operation, without fractional parts."""
+    num = random.randint(4, 25)
+    div = random.randint(5, 50)
+    return num*div, div
+
+
+def get_random_operations(min_op: int = 1,
+                          max_op: int = 1,
+                          use_one: tuple = (),
+                          not_use: tuple = ()
+                          ) -> tuple:
+    """
+    Returns a random number of random arithmetic operations.
+    :param min_op: int - min count of operations.
+    :param max_op: int - max count of operations.
+    :param use_one: tuple operations that occur once.
+    :param not_use: tuple operations that are forbidden to use.
+    :return: tuple random generation operations.
+    """
+    count = random.randint(min_op, max_op)
     operations = list()
-    for _ in range(count):
-        operations.append(random.choice(operator))
-    return operations
+
+    # generating mathematical operations
+    while len(operations) < count:
+        op = random.choice(OPERATORS)
+        if (op in use_one and op in operations) or (op in not_use):
+            continue
+        operations.append(op)
+    return tuple(operations)
 
 
 def test():
-    get_expressions()
-
-
+    print(get_expressions())
+    # print(get_random_operations(max_op=5, use_one=[':']))
