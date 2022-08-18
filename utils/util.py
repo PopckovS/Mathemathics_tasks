@@ -6,20 +6,37 @@ Functions for mathematical processing.
 """
 
 
+def get_operation_division(
+        # number: tuple = None,
+        # division: tuple = None
+    ):
+    """
+    Generation of the division operation, without fractional parts.
+    """
+    num = random.randint(4, 25)
+    div = random.randint(5, 50)
+    return num*div, div
+
+
 def get_percent_of_num(perc, num):
-    """Returns the desired percentage of the number"""
+    """
+    Returns the desired percentage of the number
+    """
     return math.ceil((num / 100) * perc)
 
 
 def get_number_of_percent(perc, perc_v):
     """
-    Returns a number, knowing the percentage and the value of this percentage of an integer
+    Returns a number, knowing the percentage and the value
+    of this percentage of an integer
     """
     return math.ceil((perc_v*100)/perc)
 
 
 def get_percent(num, denominator):
-    """Returns the percentage that one number is from another"""
+    """
+    Returns the percentage that one number is from another
+    """
     return math.ceil((num/denominator)*100)
 
 

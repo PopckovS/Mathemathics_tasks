@@ -10,5 +10,5 @@ def func_4():
 
 
 if __name__ == "__main__":
-    func_3()
-    # func_4()
+    # func_3()
+    func_4()

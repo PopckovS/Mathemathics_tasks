@@ -1,5 +1,5 @@
 import random
-from utils import util
+from utils.util import get_operation_division
 
 """
 Tasks for mathematical operations.
@@ -14,11 +14,12 @@ def get_expressions():
     Generate an expression
     :return:
     """
-    operations = get_random_operations(min_op=3, max_op=4, use_one=(':',), not_use=('*',))
+    operations = get_random_operations(min_op=3, max_op=7, use_one=(':',), not_use=())
     expressions = str()
     division = []
     num_list = []
 
+    # create number for expression
     for iter in range(len(operations)):
         current = operations[iter]
         num = random.randint(1, 10)
@@ -26,8 +27,8 @@ def get_expressions():
         if current == '+' or current == '-':
             num_list.append(num)
         elif current == ':':
-            num_list += [*operation_division()]
-            division += [*operation_division()]  #  FIXME
+            num_list += [*get_operation_division()]
+            division += [*get_operation_division()]  #  FIXME
         elif current == '*':
             num_list.append(num)
 
@@ -36,7 +37,11 @@ def get_expressions():
                 continue
             random.randint(1, 10)
 
-    #  TODO высчитать результат
+    # create expression
+    for num in num_list:
+        expressions = [''.join(str(x)) for x in zip(num_list, operations)]
+
+    # TODO get answer
 
     return dict(
         expressions=expressions,
@@ -45,13 +50,6 @@ def get_expressions():
         num_list=num_list,
         # all_answers=util.get_wrong_answers(answer)
     )
-
-
-def operation_division():
-    """Generation of the division operation, without fractional parts."""
-    num = random.randint(4, 25)
-    div = random.randint(5, 50)
-    return num*div, div
 
 
 def get_random_operations(min_op: int = 1,
