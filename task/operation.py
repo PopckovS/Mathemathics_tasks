@@ -1,5 +1,6 @@
 import random
 from utils.util import get_operation_division
+from .context_exception import ArgumentException
 
 """
 Tasks for mathematical operations.
@@ -14,7 +15,8 @@ def get_expressions():
     Generate an expression
     :return:
     """
-    operations = get_random_operations(min_op=3, max_op=7, use_one=(':',), not_use=())
+    operations = get_random_operations(
+        min_op=5, max_op=7, use_one=(), not_use=())
     expressions = str()
     division = []
     num_list = []
@@ -24,22 +26,34 @@ def get_expressions():
         current = operations[iter]
         num = random.randint(1, 10)
 
-        if current == '+' or current == '-':
+        if current in ('+', '-', '*'):
             num_list.append(num)
         elif current == ':':
             num_list += [*get_operation_division()]
-            division += [*get_operation_division()]  #  FIXME
-        elif current == '*':
-            num_list.append(num)
 
         if len(operations) == iter+1:
             if ':' in operations:
                 continue
-            random.randint(1, 10)
+            num_list.append(random.randint(1, 10))
+    # # create number for expression
+    # for iter in range(len(operations)):
+    #     current = operations[iter]
+    #     num = random.randint(1, 10)
+    #
+    #     if current in ('+', '-', '*'):
+    #         num_list.append(num)
+    #     elif current == ':':
+    #         num_list += [*get_operation_division()]
+    #
+    #     if len(operations) == iter+1:
+    #         if ':' in operations:
+    #             continue
+    #         random.randint(1, 10)
 
     # create expression
-    for num in num_list:
-        expressions = [''.join(str(x)) for x in zip(num_list, operations)]
+
+    # for op in operations:
+    #     expressions += f'num_list.pop(0)}] {op}'
 
     # TODO get answer
 
@@ -65,15 +79,24 @@ def get_random_operations(min_op: int = 1,
     :param not_use: tuple operations that are forbidden to use.
     :return: tuple random generation operations.
     """
+
+    # check gotten arguments
+    if (min_op > max_op) or not isinstance(min_op, int) or not isinstance(min_op, int):
+        raise ArgumentException((min_op, max_op))
+    elif not isinstance(use_one, tuple) or not isinstance(not_use, tuple):
+        raise ArgumentException((use_one, not_use))
+
     count = random.randint(min_op, max_op)
     operations = list()
 
     # generating mathematical operations
     while len(operations) < count:
         op = random.choice(OPERATORS)
+        # check operations
         if (op in use_one and op in operations) or (op in not_use):
             continue
         operations.append(op)
+
     return tuple(operations)
 
 
